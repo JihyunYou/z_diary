@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+{# Load the tag library #}
+{% load bootstrap5 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Z-Diary</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #00554C">
+        <div class="container">
+            <a class="navbar-brand" href="/" style="color: #FFFFFF;">
+<!--                <img src="/static/img/logo_white.jpg" alt="" width="50" height="50">-->
+                Z-Diary
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation" style="color: #FFFFFF;">
+              <span class="navbar-toggler-icon bg-white" style="color: #FFFFFF;"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/member" style="color: #FFFFFF;">가계부</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/lesson" style="color: #FFFFFF;">식단관리</a>
+                    </li>
+                </ul>
+
+                <span class="navbar-text" style="color: #FFFFFF;">
+                    {% if user.is_authenticated %}
+                        <a class="nav-link" href="/logout" style="color: #FFFFFF;">로그아웃</a>
+                    {% else %}
+                        <a class="nav-link" href="/login" style="color: #FFFFFF;">로그인</a>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="py-3"></div>
+    <div class="container-lg">
+
+        {% block main_area %}
+
+        {% endblock %}
+
+    </div>
+
+</body>
+</html>
