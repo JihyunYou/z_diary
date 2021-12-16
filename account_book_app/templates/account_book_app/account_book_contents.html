@@ -1,0 +1,157 @@
+{% extends 'common_app/base.html' %}
+
+{% load bootstrap5 %}
+
+{% load humanize %}
+
+{% block main_area %}
+
+    {% if user.is_authenticated %}
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="card">
+                    <div class="card-header">
+                        가계부
+                    </div>
+                    <div class="card-body">
+                        <div class="text-end">
+                            <a
+                                class="btn btn-success btn-sm float-right"
+                                role="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#addAccountModal"
+                            >
+                                <i class="fas fa-dollar-sign">&nbsp;&nbsp;항목 추가</i>
+                            </a>
+                        </div>
+
+                        <table class="table table-hover table-sm">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" scope="col" width="5%">#</th>
+                                    <th class="text-center" scope="col" width="18%">날짜</th>
+                                    <th class="text-center" scope="col" width="10%">범주</th>
+                                    <th class="text-center" scope="col" width="45%">설명</th>
+                                    <th class="text-center" scope="col" width="15%">금액</th>
+                                    <th class="text-center" scope="col" width="5%">편집</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for account in account_objs %}
+                                <tr onClick="location.href='/lesson/{{ account.id }}'">
+                                    <th scope="row" class="text-end">{{ forloop.counter }}</th>
+                                    <td class="text-center">{{ account.date | date:"Y-m-d ( D )"}}</td>
+                                    <td class="text-center">{{ account.category_id.name }}</td>
+                                    <td class="px-3">{{ account.description }}</td>
+                                    <td
+                                        class="text-end px-4"
+                                        style="
+                                            {% if account.amount >= 0 %}
+                                                color:blue;
+                                            {% else %}
+                                                color:red;
+                                            {% endif %}
+                                        "
+                                    >
+                                        {{ account.amount | intcomma }} 원
+                                    </td>
+                                    <td class="text-center">
+                                        <form action="del_account/" method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="account_id" value="{{ account.id }}">
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-times-circle"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th class="text-center" colspan="4">총 수입</th>
+                                    <td class="text-end px-4" style="color:blue;">{{ income | intcomma }} 원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th class="text-center" colspan="4">총 지출</th>
+                                    <td class="text-end px-4" style="color:red;">{{ expense | intcomma }} 원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th class="text-center" colspan="4">총 결산</th>
+                                    <td class="text-end px-4">{{ total | intcomma }} 원</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="card-footer">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card">
+                    <div class="card-header">
+                        범주
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">항목</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for category in category_objs %}
+                                <tr onClick="location.href='/lesson/{{ account.id }}'">
+                                    <th scope="row">{{ forloop.counter }}</th>
+                                    <td>{{ category.name  }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Account Modal -->
+        <div class="modal fade" id="addAccountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addAccountModalLabel">가계부 항목 작성</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    {{ account_form.media }}
+                    <form action="add_account/" method="post">
+                        {% csrf_token %}
+                        <div class="modal-body">
+
+                            {% bootstrap_form account_form layout="horizontal" %}
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                            <button type="submit" class="btn btn-success float-right">저장</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    <!--  로그인 하지 않은 상태라면  -->
+    {% else %}
+
+        {% include 'common_app/login_alert.html' %}
+
+    {% endif %}
+
+{% endblock %}
+

@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'common_app',
     'bootstrap5',
+    'account_book_app',
+    'django.contrib.humanize',
+    'jquery',
+    'bootstrap_datepicker_plus',
 ]
 
 MIDDLEWARE = [
@@ -118,6 +122,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -126,3 +131,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # 커스텀 유저 모델
 AUTH_USER_MODEL = 'common_app.User'
+
+# Bootstrap Setting
+# BOOTSTRAP5 = {
+#     "include_jquery": False,
+# }
+
