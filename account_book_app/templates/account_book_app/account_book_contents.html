@@ -7,8 +7,26 @@
 {% block main_area %}
 
     {% if user.is_authenticated %}
+
         <div class="row">
             <div class="col-lg-9">
+
+                {{ date_form.media }}
+                <form method="post" autocomplete="off">
+                    <div class="row">
+                        {% csrf_token %}
+                        <div class="col-6"></div>
+                        <div class="col-4">
+                            {% bootstrap_field date_form.input_date show_label=False %}
+                        </div>
+                        <div class="col-2">
+                            <button id="get_accounts_btn" type="submit" class="btn btn-success float-right">
+                                <i class="fas fa-search-dollar">&nbsp;&nbsp;불러오기</i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
                 <div class="card">
                     <div class="card-header">
                         가계부
@@ -32,13 +50,13 @@
                                     <th class="text-center" scope="col" width="18%">날짜</th>
                                     <th class="text-center" scope="col" width="10%">범주</th>
                                     <th class="text-center" scope="col" width="45%">설명</th>
-                                    <th class="text-center" scope="col" width="15%">금액</th>
-                                    <th class="text-center" scope="col" width="5%">편집</th>
+                                    <th class="text-center" scope="col" width="17%">금액</th>
+                                    <th class="text-center" scope="col" width="5%"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for account in account_objs %}
-                                <tr onClick="location.href='/lesson/{{ account.id }}'">
+                                <tr>
                                     <th scope="row" class="text-end">{{ forloop.counter }}</th>
                                     <td class="text-center">{{ account.date | date:"Y-m-d ( D )"}}</td>
                                     <td class="text-center">{{ account.category_id.name }}</td>
@@ -97,18 +115,38 @@
                         범주
                     </div>
                     <div class="card-body">
+                        <div class="text-end">
+                            <a
+                                class="btn btn-success btn-sm float-right"
+                                role="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#addCategoryModal"
+                            >
+                                <i class="fas fa-plus-circle">&nbsp;&nbsp;추가</i>
+                            </a>
+                        </div>
                         <table class="table table-hover">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">항목</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for category in category_objs %}
-                                <tr onClick="location.href='/lesson/{{ account.id }}'">
+                                <tr>
                                     <th scope="row">{{ forloop.counter }}</th>
                                     <td>{{ category.name  }}</td>
+                                    <td class="text-center">
+                                        <form action="del_category/" method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="category_id" value="{{ category.id }}">
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-times-circle"></i>
+                                            </button>
+                                        </form>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -146,6 +184,30 @@
             </div>
         </div>
 
+        <!-- Add Category Modal -->
+        <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCategoryModalLabel">범주 항목 추가</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="add_category/" method="post">
+                        {% csrf_token %}
+                        <div class="modal-body">
+
+                            {% bootstrap_form category_form layout="horizontal" %}
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                            <button type="submit" class="btn btn-success float-right">저장</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
     <!--  로그인 하지 않은 상태라면  -->
     {% else %}
 
@@ -153,5 +215,11 @@
 
     {% endif %}
 
-{% endblock %}
+<script>
+    $('#get_accounts_btn').click(function() {
+        var date = $('input_date').text;
+<!--        alert(date);-->
+    });
+</script>
 
+{% endblock %}

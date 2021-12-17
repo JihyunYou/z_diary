@@ -34,6 +34,8 @@ urlpatterns = [
     path('account_book/', account_book_app.views.show_contents),
     path('account_book/add_account/', account_book_app.views.add_account),
     path('account_book/del_account/', account_book_app.views.del_account),
+    path('account_book/add_category/', account_book_app.views.add_category),
+    path('account_book/del_category/', account_book_app.views.del_category),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
