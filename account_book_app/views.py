@@ -71,6 +71,8 @@ def show_contents(request):
 
     category_objs = Category.objects.all()
 
+    account_year = ''
+    account_month = ''
     if request.POST:
         input_date = request.POST['input_date'].split('-')
         input_year = input_date[0]
@@ -81,13 +83,16 @@ def show_contents(request):
             date__year=input_year,
             date__month=input_month,
         )
-
+        account_year = input_year
+        account_month = input_month
     else:
         account_objs = Account.objects.filter(
             user_id=request.user.id,
             date__year=datetime.today().year,
             date__month=datetime.today().month,
         )
+        account_year = datetime.today().year
+        account_month = datetime.today().month
 
     income = 0
     expense = 0
@@ -109,6 +114,9 @@ def show_contents(request):
     context['income'] = income
     context['expense'] = expense
     context['total'] = total
+
+    context['account_year'] = account_year
+    context['account_month'] = account_month
 
     return render(
         request,

@@ -10,6 +10,13 @@ def index(request):
     )
 
 
+def dev_alert(request):
+    return render(
+        request,
+        'common_app/dev_alert.html',
+    )
+
+
 def login(request):
     if request.POST:
         username = request.POST['username']

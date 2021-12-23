@@ -29,21 +29,24 @@
 
                 <div class="card">
                     <div class="card-header">
-                        가계부
+                        <div class="row">
+                            <div class="col">
+                                {{ account_year }}년 {{ account_month }}월
+                            </div>
+                            <div class="col text-end">
+                                <a
+                                    class="btn btn-success btn-sm float-right"
+                                    role="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#addAccountModal"
+                                >
+                                    <i class="fas fa-dollar-sign">&nbsp;&nbsp;항목 추가</i>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
-                        <div class="text-end">
-                            <a
-                                class="btn btn-success btn-sm float-right"
-                                role="button"
-                                data-bs-toggle="modal"
-                                data-bs-target="#addAccountModal"
-                            >
-                                <i class="fas fa-dollar-sign">&nbsp;&nbsp;항목 추가</i>
-                            </a>
-                        </div>
-
-                        <table class="table table-hover table-sm">
+                        <table class="table table-hover table-sm" id="account_book_table">
                             <thead>
                                 <tr>
                                     <th class="text-center" scope="col" width="5%">#</th>
@@ -104,27 +107,35 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="card-footer">
-
+                    <div class="card-footer text-end">
+                        <a
+                            id="excel-download-btn"
+                            class="btn btn-success btn-sm float-right"
+                            role="button"
+                        >
+                            <i class="fas fa-file-excel">&nbsp;&nbsp;엑셀로 다운받기</i>
+                        </a>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3">
                 <div class="card">
                     <div class="card-header">
-                        범주
+                        <div class="row">
+                            <div class="col">범주</div>
+                            <div class="col text-end">
+                                <a
+                                    class="btn btn-success btn-sm float-right"
+                                    role="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#addCategoryModal"
+                                >
+                                    <i class="fas fa-plus-circle">&nbsp;&nbsp;추가</i>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
-                        <div class="text-end">
-                            <a
-                                class="btn btn-success btn-sm float-right"
-                                role="button"
-                                data-bs-toggle="modal"
-                                data-bs-target="#addCategoryModal"
-                            >
-                                <i class="fas fa-plus-circle">&nbsp;&nbsp;추가</i>
-                            </a>
-                        </div>
                         <table class="table table-hover">
                             <thead>
                                 <tr>
@@ -151,9 +162,6 @@
                                 {% endfor %}
                             </tbody>
                         </table>
-                    </div>
-                    <div class="card-footer">
-
                     </div>
                 </div>
             </div>
@@ -214,6 +222,14 @@
         {% include 'common_app/login_alert.html' %}
 
     {% endif %}
+
+<script>
+    $('#excel-download-btn').click(function() {
+        alert("다운로드 합니다");
+        var wb = XLSX.utils.table_to_book(document.getElementById('account_book_table'), {sheet:"sheet1", raw:true});
+        XLSX.writeFile(wb, ('가계부_{{ account_year }}_{{ account_month }}.xlsx'));
+    });
+</script>
 
 <script>
     $('#get_accounts_btn').click(function() {
