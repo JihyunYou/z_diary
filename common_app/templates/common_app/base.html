@@ -28,7 +28,7 @@
             font-family: 'default';
         }
         .navbar {
-            background-color: #e0efdc;
+            background-color: black;
         }
 
         .card {
@@ -36,6 +36,9 @@
         }
         .card-header {
 <!--            background-color: #e0efdc;-->
+        }
+        .active a {
+            color: orange;
         }
     </style>
 
@@ -57,7 +60,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
-            <a class="navbar-brand" href="/" style="color: #003a1b;">
+            <a class="navbar-brand" href="/" style="color: white;">
 <!--                <img src="/static/img/logo_white.jpg" alt="" width="50" height="50">-->
                 Z-Diary
             </a>
@@ -69,27 +72,27 @@
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/account_book">가계부</a>
+                        <a class="nav-link" aria-current="page" href="/account_book" style="color: white;">가계부</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/dev">식단관리</a>
+                        <a class="nav-link" href="/dev" style="color: white;">식단관리</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/dev">운동일지</a>
+                        <a class="nav-link" href="/dev" style="color: white;">운동일지</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/dev">스케쥴</a>
+                        <a class="nav-link" href="/dev" style="color: white;">스케쥴</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/dev">일기</a>
+                        <a class="nav-link" href="/dev" style="color: white;">일기</a>
                     </li>
                 </ul>
 
                 <span class="navbar-text">
                     {% if user.is_authenticated %}
-                        <a class="nav-link btn btn-outline-light" href="/logout">로그아웃</a>
+                        <a class="nav-link btn btn-warning" href="/logout">로그아웃</a>
                     {% else %}
-                        <a class="nav-link btn btn-outline-light" href="/login">로그인</a>
+                        <a class="nav-link btn btn-warning" href="/login">로그인</a>
                     {% endif %}
                 </span>
             </div>

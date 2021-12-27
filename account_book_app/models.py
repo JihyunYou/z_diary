@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import Sum, Value
+from django.db.models.functions import Coalesce
 
 from common_app.models import User
 from z_diary_proj import settings
@@ -18,6 +20,9 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['id', ]
+
 
 class Account(models.Model):
     # 사용자
@@ -32,8 +37,9 @@ class Account(models.Model):
     category_id = models.ForeignKey(
         Category,
         related_name='category',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         db_column='category_id',
+        null=True
     )
 
     date = models.DateField(null=False)
@@ -45,3 +51,14 @@ class Account(models.Model):
 
     class Meta:
         ordering = ['date', ]
+
+    def get_sum_by_category(self, user_id, year, month):
+        result = Account.objects.filter(
+            user_id=user_id,
+            date__year=year,
+            date__month=month,
+        ).values('category_id').order_by('category_id').annotate(
+            sum_amount=Coalesce(Sum('amount'), Value(0))
+        )
+
+        return result

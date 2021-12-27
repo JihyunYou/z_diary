@@ -1,0 +1,106 @@
+{% extends 'common_app/base.html' %}
+
+{% load bootstrap5 %}
+
+{% load humanize %}
+
+{% block main_area %}
+
+    {% if user.is_authenticated %}
+
+        <div class="row">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-8">
+
+        <div class="text-end">
+            <a
+                class="btn btn-warning"
+                role="button"
+                href="/account_book"
+            >
+                <i class="fas fa-backward">&nbsp;&nbsp;돌아가기</i>
+            </a>
+        </div>
+        <br>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>가계부 세부 정보</h2>
+            </div>
+            <div class="card-body">
+
+                <table class="table">
+                    <tr>
+                        <th>일자</th>
+                        <td>{{ account_obj.date | date:"Y-m-d ( D )" }}</td>
+                    </tr>
+                    <tr>
+                        <th>범주</th>
+                        <td>{{ account_obj.category_id }}</td>
+                    </tr>
+                    <tr>
+                        <th>금액</th>
+                        <td
+                            style="
+                                {% if account_obj.amount >= 0 %}
+                                    color:blue;
+                                {% else %}
+                                    color:red;
+                                {% endif %}
+                            "
+                        >{{ account_obj.amount | intcomma }} 원</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">{{ account_obj.description }}</td>
+                    </tr>
+                </table>
+
+            </div>
+            <div class="card-footer text-end">
+                <a
+                    class="btn btn-success btn-sm float-right"
+                    role="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#updateAccountModal"
+                >
+                    <i class="fas fa-dollar-sign">&nbsp;&nbsp;수정</i>
+                </a>
+            </div>
+        </div>
+
+            </div>
+            <div class="col-lg-2"></div>
+        </div>
+
+
+    <!-- Add Account Modal -->
+    <div class="modal fade" id="updateAccountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateAccountModalLabel">가계부 항목 수정</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                {{ account_form.media }}
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="modal-body">
+
+                        {% bootstrap_form account_form layout="horizontal" %}
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        <button type="submit" class="btn btn-success float-right">저장</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--  로그인 하지 않은 상태라면  -->
+    {% else %}
+        {% include 'common_app/login_alert.html' %}
+    {% endif %}
+
+{% endblock %}

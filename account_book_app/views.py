@@ -14,7 +14,7 @@ from account_book_app.models import Category, Account
 class DateForm(forms.Form):
     input_date = forms.DateField(
         input_formats=['%Y-%m-%d'],
-        label='원하는 월을 고르세요',
+        label='조회할 월을 고르세요',
         widget=MonthPickerInput(
             attrs={
                 'id': 'input_date',
@@ -94,6 +94,13 @@ def show_contents(request):
         account_year = datetime.today().year
         account_month = datetime.today().month
 
+    category_sum = Account.get_sum_by_category(
+        None,
+        request.user.id,
+        account_year,
+        account_month
+    )
+
     income = 0
     expense = 0
     for account in account_objs:
@@ -106,6 +113,7 @@ def show_contents(request):
 
     context['category_objs'] = category_objs
     context['account_objs'] = account_objs
+    context['category_sum'] = category_sum
     context['account_form'] = account_form
     context['category_form'] = category_form
 
@@ -156,6 +164,50 @@ def del_account(request):
         account_obj = Account.objects.get(pk=request.POST['account_id'])
         if account_obj is not None:
             account_obj.delete()
+
+    return redirect(show_contents)
+
+
+def account_detail(request, account_id):
+    # 로그인 하지 않은 사용자가 URL을 통해 회원을 삭제하는 것을 막음
+    if not request.user.is_authenticated:
+        print("권한 없는 사용자의 가계부 내용 등록 차단")
+        return redirect(show_contents)
+
+    context = {}
+    account_obj = Account.objects.get(pk=account_id)
+
+    account_form = AccountForm(request.POST or None, instance=account_obj)
+    if account_form.is_valid():
+        account_form.save()
+        return redirect(account_detail, account_id=account_id)
+
+    context['account_obj'] = account_obj
+    context['account_form'] = account_form
+
+    return render(
+        request,
+        'account_book_app/account_detail.html',
+        context,
+    )
+
+def update_account(request):
+    # 로그인 하지 않은 사용자가 URL을 통해 회원을 삭제하는 것을 막음
+    if not request.user.is_authenticated:
+        print("권한 없는 사용자의 가계부 내용 등록 차단")
+        return redirect(show_contents)
+
+    if request.POST:
+        account_form = AccountForm(request.POST or None)
+        if account_form.is_valid():
+            account = account_form.save(commit=False)
+
+            account.user_id = request.user
+            account.created_by = request.user
+
+            account.save()
+
+            return redirect(show_contents)
 
     return redirect(show_contents)
 
