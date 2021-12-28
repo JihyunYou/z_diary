@@ -8,6 +8,7 @@ from django import forms
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
+from account_book_app import models
 from account_book_app.models import Category, Account
 
 
@@ -51,6 +52,11 @@ class AccountForm(ModelForm):
             ),
         }
 
+    def __init__(self, user=None, **kwargs):
+        super(AccountForm, self).__init__(**kwargs)
+        if user:
+            self.fields['category_id'].queryset = models.Category.objects.filter(created_by=user)
+
 
 class CategoryForm(ModelForm):
     class Meta:
@@ -67,15 +73,16 @@ class CategoryForm(ModelForm):
 
 def show_contents(request):
     context = {}
-    account_form = AccountForm
-    category_form = CategoryForm
-    date_form = DateForm
 
     if not request.user.is_authenticated:
         return render(
             request,
             'account_book_app/account_book_contents.html',
         )
+
+    account_form = AccountForm(user=request.user)
+    category_form = CategoryForm
+    date_form = DateForm
 
     category_objs = Category.objects.filter(
         created_by=request.user
