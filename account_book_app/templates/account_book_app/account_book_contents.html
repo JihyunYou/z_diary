@@ -82,16 +82,39 @@
                                     >
                                         {{ account.amount | intcomma }} 원
                                     </td>
-                                    <td class="text-center">
-                                        <form action="del_account/" method="post">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="account_id" value="{{ account.id }}">
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="fas fa-times-circle"></i>
-                                            </button>
-                                        </form>
+                                    <td class="text-center" onclick="event.cancelBubble=true;">
+                                        <a class="btn btn-danger btn-sm btn-sm" role="button" data-bs-toggle="modal" data-bs-target="#deleteAccountModal{{ account.id }}">
+                                            <i class="fas fa-times-circle"></i>
+                                        </a>
                                     </td>
                                 </tr>
+
+                                <!-- Delete Account Modal -->
+                                <div class="modal fade" id="deleteAccountModal{{ account.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteAccountModalLabel">경고</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                [ {{ account.date | date:"Y-m-d ( D )"}} ] 가계부 항목을 삭제하시겠습니까.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form action="del_account/" method="post">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="account_id" value="{{ account.id }}">
+
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <i class="fas fa-times-circle">&nbsp;&nbsp;삭제</i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {% endfor %}
                             </tbody>
                             <tfoot>
@@ -152,7 +175,7 @@
                             </thead>
                             <tbody>
                                 {% for category in category_objs %}
-                                <tr>
+                                <tr onClick="location.href='/account_book/{{ category.id }}/category_detail'">
                                     <td class="text-center">{{ category.name  }}</td>
                                     <td class="text-end">
                                     {% for sum in category_sum %}
@@ -162,16 +185,39 @@
                                     {% endfor %}
                                     </td>
 
-                                    <td class="text-center">
-                                        <form action="del_category/" method="post">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="category_id" value="{{ category.id }}">
-                                            <button type="submit" class="btn btn-danger btn-sm" id="del_category_btn">
-                                                <i class="fas fa-times-circle"></i>
-                                            </button>
-                                        </form>
+                                    <td class="text-center" onclick="event.cancelBubble=true;">
+                                        <a class="btn btn-danger btn-sm btn-sm" role="button" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal{{ category.id }}">
+                                            <i class="fas fa-times-circle"></i>
+                                        </a>
                                     </td>
                                 </tr>
+
+                                <!-- Delete Category Modal -->
+                                <div class="modal fade" id="deleteCategoryModal{{ category.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">경고</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                [ {{ category.name  }} ] 범주 삭제시 해당 범주의 가계부 정보의 카테고리 정보도 함께 삭제 됩니다.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form action="del_category/" method="post">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="category_id" value="{{ category.id }}">
+
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <i class="fas fa-times-circle">&nbsp;&nbsp;삭제</i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -225,34 +271,6 @@
                             <button type="submit" class="btn btn-primary float-right">저장</button>
                         </div>
                     </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Delete Category Modal -->
-        <div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">경고</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        범주 삭제시 해당 범주의 가계부 정보의 카테고리 정보도 함께 삭제 됩니다.
-                    </div>
-                    <div class="modal-footer">
-                        <form action="del_category/" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="category_id" value="{{ category.id }}">
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                <i class="fas fa-times-circle"></i>
-                            </button>
-                        </form>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    <a class="btn btn-danger float-right" href="/account_book/del_category/" role="button">
-                        삭제
-                    </a>
-                    </div>
                 </div>
             </div>
         </div>

@@ -1,0 +1,142 @@
+{% extends 'common_app/base.html' %}
+
+{% load bootstrap5 %}
+
+{% load humanize %}
+
+{% block main_area %}
+
+    {% if user.is_authenticated %}
+
+        <div class="row">
+            <div class="col-lg-1"></div>
+            <div class="col-lg-7">
+
+        <div class="text-end">
+            <a
+                class="btn btn-warning"
+                role="button"
+                href="/account_book"
+            >
+                <i class="fas fa-backward">&nbsp;&nbsp;돌아가기</i>
+            </a>
+        </div>
+        <br>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>가계부 범주 세부 정보</h2>
+            </div>
+            <div class="card-body">
+
+                <table class="table">
+                    <tr>
+                        <th>범주</th>
+                        <td>{{ category_obj.name }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">{{ category_obj.description }}</td>
+                    </tr>
+                </table>
+
+            </div>
+            <div class="card-footer text-end">
+                <a
+                    class="btn btn-success btn-sm float-right"
+                    role="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#updateCategoryModal"
+                >
+                    <i class="fas fa-dollar-sign">&nbsp;&nbsp;수정</i>
+                </a>
+            </div>
+        </div>
+
+            </div>
+            <div class="col-lg-3">
+
+        <div class="card">
+            <div class="card-header">
+                범주 전체 리스트
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>순서</th>
+                            <th>범주</th>
+                            <th class="text-center">순서 편집</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in category_objs %}
+                        <tr>
+                            <td>{{ category.order }}</td>
+                            <td>{{ category.name }}</td>
+                            <td>
+                                <div class="row text-center">
+                                    <div class="col">
+                                        <form action="set_category_order/" method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="category_order" value="{{ category.order }}">
+                                            <input type="hidden" name="action_type" value="up">
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-arrow-circle-up"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                        <form action="set_category_order/" method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="category_order" value="{{ category.order }}">
+                                            <input type="hidden" name="action_type" value="down">
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-arrow-circle-down"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+            </div>
+            <div class="col-lg-1"></div>
+        </div>
+
+
+    <!-- Update Category Modal -->
+    <div class="modal fade" id="updateCategoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateCategoryModalLabel">가계부 항목 수정</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="modal-body">
+
+                        {% bootstrap_form category_form layout="horizontal" %}
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        <button type="submit" class="btn btn-success float-right">저장</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--  로그인 하지 않은 상태라면  -->
+    {% else %}
+        {% include 'common_app/login_alert.html' %}
+    {% endif %}
+
+{% endblock %}

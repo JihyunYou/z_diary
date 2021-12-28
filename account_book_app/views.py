@@ -57,9 +57,11 @@ class CategoryForm(ModelForm):
         model = Category
         fields = [
             'name',
+            'description',
         ]
         labels = {
-            'name': '항목명'
+            'name': '항목명',
+            'description': '설명'
         }
 
 
@@ -69,7 +71,9 @@ def show_contents(request):
     category_form = CategoryForm
     date_form = DateForm
 
-    category_objs = Category.objects.all()
+    category_objs = Category.objects.filter(
+        created_by=request.user
+    )
 
     account_year = ''
     account_month = ''
@@ -133,6 +137,56 @@ def show_contents(request):
     )
 
 
+def account_detail(request, account_id):
+    # 로그인 하지 않은 사용자가 URL을 통해 회원을 삭제하는 것을 막음
+    if not request.user.is_authenticated:
+        print("권한 없는 사용자의 가계부 내용 등록 차단")
+        return redirect(show_contents)
+
+    context = {}
+    account_obj = Account.objects.get(pk=account_id)
+
+    account_form = AccountForm(request.POST or None, instance=account_obj)
+    if account_form.is_valid():
+        account_form.save()
+        return redirect(account_detail, account_id=account_id)
+
+    context['account_obj'] = account_obj
+    context['account_form'] = account_form
+
+    return render(
+        request,
+        'account_book_app/account_detail.html',
+        context,
+    )
+
+
+def category_detail(request, category_id):
+    # 로그인 하지 않은 사용자가 URL을 통해 회원을 삭제하는 것을 막음
+    if not request.user.is_authenticated:
+        print("권한 없는 사용자의 가계부 내용 등록 차단")
+        return redirect(show_contents)
+
+    context = {}
+    category_objs = Category.objects.filter(created_by=request.user)
+    category_obj = Category.objects.get(pk=category_id)
+
+    category_form = CategoryForm(request.POST or None, instance=category_obj)
+    if category_form.is_valid():
+        category_form.save()
+        return redirect(category_detail, category_id=category_id)
+
+    context['category_objs'] = category_objs
+    context['category_obj'] = category_obj
+    context['category_form'] = category_form
+
+    return render(
+        request,
+        'account_book_app/category_detail.html',
+        context,
+    )
+
+
 def add_account(request):
     # 로그인 하지 않은 사용자가 URL을 통해 회원을 삭제하는 것을 막음
     if not request.user.is_authenticated:
@@ -168,29 +222,6 @@ def del_account(request):
     return redirect(show_contents)
 
 
-def account_detail(request, account_id):
-    # 로그인 하지 않은 사용자가 URL을 통해 회원을 삭제하는 것을 막음
-    if not request.user.is_authenticated:
-        print("권한 없는 사용자의 가계부 내용 등록 차단")
-        return redirect(show_contents)
-
-    context = {}
-    account_obj = Account.objects.get(pk=account_id)
-
-    account_form = AccountForm(request.POST or None, instance=account_obj)
-    if account_form.is_valid():
-        account_form.save()
-        return redirect(account_detail, account_id=account_id)
-
-    context['account_obj'] = account_obj
-    context['account_form'] = account_form
-
-    return render(
-        request,
-        'account_book_app/account_detail.html',
-        context,
-    )
-
 def update_account(request):
     # 로그인 하지 않은 사용자가 URL을 통해 회원을 삭제하는 것을 막음
     if not request.user.is_authenticated:
@@ -225,6 +256,11 @@ def add_category(request):
 
             category.created_by = request.user
 
+            # Order 값 설정
+            count = Category.objects.filter(created_by=request.user).count()
+            count += 1
+            category.order = count
+
             category.save()
 
             return redirect(show_contents)
@@ -242,5 +278,46 @@ def del_category(request):
         category_obj = Category.objects.get(pk=request.POST['category_id'])
         if category_obj is not None:
             category_obj.delete()
+
+    return redirect(show_contents)
+
+
+def set_category_order(request, category_id):
+    # 로그인 하지 않은 사용자가 URL을 통해 회원을 삭제하는 것을 막음
+    if not request.user.is_authenticated:
+        print("권한 없는 사용자의 가계부 내용 등록 차단")
+        return redirect(show_contents)
+
+    if request.POST:
+        current_order = request.POST['category_order']
+        action_type = request.POST['action_type']
+        if action_type == "up":
+            new_order = int(current_order) - 1
+        else:
+            new_order = int(current_order) + 1
+
+        try:
+            old_category_obj = Category.objects.get(
+                created_by=request.user,
+                order=current_order
+            )
+            new_category_obj = Category.objects.get(
+                created_by=request.user,
+                order=new_order
+            )
+
+            old_category_obj.order = 0
+            old_category_obj.save()
+
+            new_category_obj.order = int(current_order)
+            new_category_obj.save()
+
+            old_category_obj.order = new_order
+            old_category_obj.save()
+
+        except:
+            print("잘못된 입력")
+
+        return redirect(category_detail, category_id)
 
     return redirect(show_contents)

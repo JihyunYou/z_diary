@@ -14,6 +14,8 @@ class Category(models.Model):
 
     description = models.TextField()
 
+    order = models.IntegerField()
+
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -21,7 +23,7 @@ class Category(models.Model):
         return self.name
 
     class Meta:
-        ordering = ['id', ]
+        ordering = ['order', ]
 
 
 class Account(models.Model):
