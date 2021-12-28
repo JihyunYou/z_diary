@@ -25,6 +25,12 @@ SECRET_KEY = 'django-insecure-y+z!l+8idjs*=-bhymk#7cmcs#s$13n(he)7fv1$)xv$tc7j=4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# 배포시에는 CSRF 를 위해 아래 내용을 추가해 주어야 함
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.3.34.58.113/',
+    'http://*.3.34.58.113/'
+]
+
 ALLOWED_HOSTS = ['*']
 
 
