@@ -28,7 +28,9 @@ DEBUG = True
 # 배포시에는 CSRF 를 위해 아래 내용을 추가해 주어야 함
 CSRF_TRUSTED_ORIGINS = [
     'https://*.3.34.58.113/',
-    'http://*.3.34.58.113/'
+    'http://*.3.34.58.113/',
+    'https://*.z-diary.co.kr',
+    'http://*.z-diary.co.kr',
 ]
 
 ALLOWED_HOSTS = ['*']
