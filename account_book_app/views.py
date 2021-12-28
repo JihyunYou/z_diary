@@ -71,6 +71,12 @@ def show_contents(request):
     category_form = CategoryForm
     date_form = DateForm
 
+    if not request.user.is_authenticated:
+        return render(
+            request,
+            'account_book_app/account_book_contents.html',
+        )
+
     category_objs = Category.objects.filter(
         created_by=request.user
     )
