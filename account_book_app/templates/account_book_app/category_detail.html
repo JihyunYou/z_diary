@@ -8,52 +8,9 @@
 
     {% if user.is_authenticated %}
 
-        <div class="row">
-            <div class="col-lg-1"></div>
-            <div class="col-lg-7">
+<div class="row">
 
-        <div class="text-end">
-            <a
-                class="btn btn-warning"
-                role="button"
-                href="/account_book"
-            >
-                <i class="fas fa-backward">&nbsp;&nbsp;돌아가기</i>
-            </a>
-        </div>
-        <br>
-
-        <div class="card">
-            <div class="card-header">
-                <h2>가계부 범주 세부 정보</h2>
-            </div>
-            <div class="card-body">
-
-                <table class="table">
-                    <tr>
-                        <th>범주</th>
-                        <td>{{ category_obj.name }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">{{ category_obj.description }}</td>
-                    </tr>
-                </table>
-
-            </div>
-            <div class="card-footer text-end">
-                <a
-                    class="btn btn-success btn-sm float-right"
-                    role="button"
-                    data-bs-toggle="modal"
-                    data-bs-target="#updateCategoryModal"
-                >
-                    <i class="fas fa-dollar-sign">&nbsp;&nbsp;수정</i>
-                </a>
-            </div>
-        </div>
-
-            </div>
-            <div class="col-lg-3">
+    <div class="col-lg-3 not-mobile">
 
         <div class="card">
             <div class="card-header">
@@ -72,7 +29,14 @@
                         {% for category in category_objs %}
                         <tr>
                             <td>{{ category.order }}</td>
-                            <td>{{ category.name }}</td>
+                            <td style="
+                                max-width: 100px;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;"
+                            >
+                                {{ category.name }}
+                            </td>
                             <td>
                                 <div class="row text-center">
                                     <div class="col">
@@ -80,7 +44,7 @@
                                             {% csrf_token %}
                                             <input type="hidden" name="category_order" value="{{ category.order }}">
                                             <input type="hidden" name="action_type" value="up">
-                                            <button type="submit" class="btn btn-danger btn-sm">
+                                            <button type="submit" class="btn btn-primary btn-sm">
                                                 <i class="fas fa-arrow-circle-up"></i>
                                             </button>
                                         </form>
@@ -104,35 +68,114 @@
             </div>
         </div>
 
+    </div>
+
+    <div class="col-lg-9">
+
+        <div class="row">
+            <div class="col">
+                <h3>[ 범주: {{ category_obj.name }} ]의 세부 정보</h3>
             </div>
-            <div class="col-lg-1"></div>
+            <div class="col text-end">
+                <a
+                    class="btn btn-warning"
+                    role="button"
+                    href="/account_book"
+                >
+                    <i class="fas fa-backward">&nbsp;&nbsp;돌아가기</i>
+                </a>
+            </div>
+        </div>
+        <hr class="style1">
+
+        <div class="text-end">
+            <a
+                class="btn btn-danger btn-sm btn-sm"
+                role="button" data-bs-toggle="modal"
+                data-bs-target="#deleteCategoryModal"
+            >
+                <i class="fas fa-trash-alt">&nbsp;&nbsp;삭제</i>
+            </a>
+
+            <a
+                class="btn btn-success btn-sm float-right"
+                role="button"
+                data-bs-toggle="modal"
+                data-bs-target="#updateCategoryModal"
+            >
+                <i class="fas fa-edit">&nbsp;&nbsp;수정</i>
+            </a>
         </div>
 
+        <table class="table">
+            <tr>
+                <th>순서</th>
+                <td>{{ category_obj.order }}</td>
+            </tr>
+            <tr>
+                <th>설명</th>
+                <td>{{ category_obj.description }}</td>
+            </tr>
+        </table>
 
-    <!-- Update Category Modal -->
-    <div class="modal fade" id="updateCategoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="updateCategoryModalLabel">가계부 항목 수정</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
 
-                <form method="post">
+    </div>
+
+</div>
+
+<!-- Delete Category Modal -->
+<div class="modal fade"
+     id="deleteCategoryModal"
+     tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">경고</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                [ 범주: {{ category_obj.name  }} ]  삭제시 해당 범주의 가계부 정보의 카테고리 정보도 함께 삭제 됩니다.
+            </div>
+            <div class="modal-footer">
+                <form action="del_category/" method="post">
                     {% csrf_token %}
-                    <div class="modal-body">
+                    <input type="hidden" name="category_id" value="{{ category_obj.id }}">
 
-                        {% bootstrap_form category_form layout="horizontal" %}
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                        <button type="submit" class="btn btn-success float-right">저장</button>
-                    </div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt">&nbsp;&nbsp;삭제</i>
+                    </button>
                 </form>
             </div>
         </div>
     </div>
+</div>
+
+<!-- Update Category Modal -->
+<div class="modal fade" id="updateCategoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateCategoryModalLabel">가계부 항목 수정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+
+                    {% bootstrap_form category_form layout="horizontal" %}
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="submit" class="btn btn-success float-right">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
     <!--  로그인 하지 않은 상태라면  -->
     {% else %}

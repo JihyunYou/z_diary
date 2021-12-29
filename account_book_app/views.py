@@ -1,8 +1,11 @@
 import json
 from datetime import datetime
+from multiprocessing import Value
 
 from bootstrap_datepicker_plus import widgets
 from bootstrap_datepicker_plus.widgets import DatePickerInput, MonthPickerInput
+from django.db.models import Sum
+from django.db.models.functions import Coalesce
 from django.forms import ModelForm
 from django import forms
 from django.http import HttpResponse
@@ -52,8 +55,8 @@ class AccountForm(ModelForm):
             ),
         }
 
-    def __init__(self, user=None, **kwargs):
-        super(AccountForm, self).__init__(**kwargs)
+    def __init__(self, user=None, *args, **kwargs):
+        super(AccountForm, self).__init__(*args, **kwargs)
         if user:
             self.fields['category_id'].queryset = models.Category.objects.filter(created_by=user)
 
@@ -84,10 +87,6 @@ def show_contents(request):
     category_form = CategoryForm
     date_form = DateForm
 
-    category_objs = Category.objects.filter(
-        created_by=request.user
-    )
-
     account_year = ''
     account_month = ''
     if request.POST:
@@ -111,12 +110,17 @@ def show_contents(request):
         account_year = datetime.today().year
         account_month = datetime.today().month
 
-    category_sum = Account.get_sum_by_category(
-        None,
-        request.user.id,
-        account_year,
-        account_month
+    # 조회 유저의 Category 로드, 사용 계 계산
+    category_objs = Category.objects.filter(
+        created_by=request.user
     )
+    for category in category_objs:
+        category.total = category.account_set.filter(
+            date__year=account_year,
+            date__month=account_month,
+        ).aggregate(
+            total=Sum('amount')
+        ).get('total') or 0
 
     income = 0
     expense = 0
@@ -130,7 +134,6 @@ def show_contents(request):
 
     context['category_objs'] = category_objs
     context['account_objs'] = account_objs
-    context['category_sum'] = category_sum
     context['account_form'] = account_form
     context['category_form'] = category_form
 
@@ -159,6 +162,21 @@ def account_detail(request, account_id):
     context = {}
     account_obj = Account.objects.get(pk=account_id)
 
+    # ################# Category 정보
+    category_form = CategoryForm
+    # 조회 유저의 Category 로드, 사용 계 계산
+    category_objs = Category.objects.filter(
+        created_by=request.user
+    )
+    for category in category_objs:
+        category.total = category.account_set.filter(
+            date__year=account_obj.date.year,
+            date__month=account_obj.date.month,
+        ).aggregate(
+            total=Sum('amount')
+        ).get('total') or 0
+    # #################
+
     account_form = AccountForm(request.POST or None, instance=account_obj)
     if account_form.is_valid():
         account_form.save()
@@ -166,6 +184,9 @@ def account_detail(request, account_id):
 
     context['account_obj'] = account_obj
     context['account_form'] = account_form
+
+    context['category_form'] = category_form
+    context['category_objs'] = category_objs
 
     return render(
         request,
@@ -207,7 +228,7 @@ def add_account(request):
         return redirect(show_contents)
 
     if request.POST:
-        account_form = AccountForm(request.POST or None)
+        account_form = AccountForm(request.user, request.POST or None)
         if account_form.is_valid():
             account = account_form.save(commit=False)
 
@@ -221,14 +242,14 @@ def add_account(request):
     return redirect(show_contents)
 
 
-def del_account(request):
+def del_account(request, account_id):
     # 로그인 하지 않은 사용자가 URL을 통해 회원을 삭제하는 것을 막음
     if not request.user.is_authenticated:
         print("권한 없는 사용자의 가계부 내용 등록 차단")
         return redirect(show_contents)
 
     if request.POST:
-        account_obj = Account.objects.get(pk=request.POST['account_id'])
+        account_obj = Account.objects.get(pk=account_id)
         if account_obj is not None:
             account_obj.delete()
 
@@ -281,18 +302,33 @@ def add_category(request):
     return redirect(show_contents)
 
 
-def del_category(request):
+def del_category(request, category_id):
     # 로그인 하지 않은 사용자가 URL을 통해 회원을 삭제하는 것을 막음
     if not request.user.is_authenticated:
         print("권한 없는 사용자의 가계부 내용 등록 차단")
         return redirect(show_contents)
 
     if request.POST:
-        category_obj = Category.objects.get(pk=request.POST['category_id'])
+        category_obj = Category.objects.get(pk=category_id)
         if category_obj is not None:
+
+            # Category 삭제 시 해당 카테코리의 순서 재설정
+            reset_category_order(request.user, category_obj.order)
+
             category_obj.delete()
 
     return redirect(show_contents)
+
+
+def reset_category_order(user, order):
+    category_objs = Category.objects.filter(created_by=user).order_by('order')
+
+    for category in category_objs:
+        if category.order > order:
+            category.order -= 1
+            category.save()
+
+    return
 
 
 def set_category_order(request, category_id):

@@ -32,13 +32,19 @@
         }
 
         .card {
-            border-color: #76323f;
+<!--            border-color: #76323f;-->
         }
         .card-header {
 <!--            background-color: #e0efdc;-->
         }
         .active a {
             color: orange;
+        }
+
+        @media only screen and (max-width: 767px) {
+            .not-mobile {
+                display: none;
+            }
         }
     </style>
 
@@ -85,6 +91,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/dev" style="color: white;">일기</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/community" style="color: white;">자유게시판</a>
                     </li>
                 </ul>
 

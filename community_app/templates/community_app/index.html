@@ -1,0 +1,88 @@
+{% extends 'common_app/base.html' %}
+
+{% load bootstrap5 %}
+
+{% load humanize %}
+
+{% block main_area %}
+
+<div class="row">
+    <div class="col-3">
+        {% include 'community_app/base_left.html' %}
+    </div>
+    <div class="col-9">
+        <h3>자유게시판</h3>
+        <p>{{ post_objs.count | intcomma }} 개의 글</p>
+        <hr class="style1">
+
+        <div class="col text-end">
+            {% if user.is_authenticated %}
+            <a
+                class="btn btn-warning btn-sm"
+                role="button"
+                data-bs-toggle="modal"
+                data-bs-target="#addPostModal"
+            >
+                <i class="fas fa-plus-square">&nbsp;&nbsp;새 글 쓰기</i>
+            </a>
+            {% else %}
+            <a
+                class="btn btn-warning btn-sm"
+                role="button"
+            >
+                <i class="fas fa-times-circle">&nbsp;&nbsp;글 작성은 회원만 가능합니다</i>
+            </a>
+            {% endif %}
+        </div>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th width="70%" class="text-center">제목</th>
+                    <th width="15%" class="text-center">작성자</th>
+                    <th width="15%" class="text-center">작성일</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in post_objs %}
+                <tr onClick="location.href='/community/{{ post.id }}/post_detail'">
+                    <td>
+                        <span class="badge bg-secondary">
+                            {{ post.category_id }}
+                        </span>
+                        {{ post.title }}
+                    </td>
+                    <td class="text-center">{{ post.created_by }}</td>
+                    <td class="text-center">{{ post.created_at | date:"Y.m.d"}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Post Modal -->
+<div class="modal fade" id="addPostModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addAccountModalLabel">새 글 작성</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="add_post/" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+
+                    {% bootstrap_form post_form layout="horizontal" %}
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="submit" class="btn btn-success float-right">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

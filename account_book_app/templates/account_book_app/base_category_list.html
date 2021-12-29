@@ -1,0 +1,58 @@
+{% load humanize %}
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col">범주</div>
+            <div class="col text-end">
+                <a
+                    class="btn btn-success btn-sm float-right"
+                    role="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addCategoryModal"
+                >
+                    <i class="fas fa-plus-circle">&nbsp;&nbsp;추가</i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th class="text-center">항목</th>
+                    <th class="text-center">계</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in category_objs %}
+                <tr onClick="location.href='/account_book/{{ category.id }}/category_detail'">
+                    <td class="text-center"
+                        style="
+                            max-width: 100px;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;"
+                    >
+                        {{ category.name  }}
+                    </td>
+                    <td class="text-end"
+                        style="
+                            {% if category.total > 0 %}
+                                color:blue;
+                            {% elif category.total < 0 %}
+                                color:red;
+                            {% endif %}
+                        "
+                    >
+                        {{ category.total | intcomma }} 원
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Category Modal -->
+{% include 'account_book_app/base_add_category_modal.html' %}

@@ -1,0 +1,25 @@
+{% load bootstrap5 %}
+
+<div class="modal fade" id="addAccountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addAccountModalLabel">가계부 항목 작성</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            {{ account_form.media }}
+            <form action="add_account/" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+
+                    {% bootstrap_form account_form layout="horizontal" %}
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="submit" class="btn btn-primary float-right">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

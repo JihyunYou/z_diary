@@ -18,8 +18,9 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
-import account_book_app.views
 import common_app.views
+import account_book_app.views
+import community_app.views
 
 urlpatterns = [
     # ADMIN
@@ -36,13 +37,28 @@ urlpatterns = [
     path('account_book/<int:account_id>/account_detail/', account_book_app.views.account_detail),
     path('account_book/<int:category_id>/category_detail/', account_book_app.views.category_detail),
     path('account_book/add_account/', account_book_app.views.add_account),
-    path('account_book/del_account/', account_book_app.views.del_account),
+    path(
+        'account_book/<int:account_id>/account_detail/del_account/',
+        account_book_app.views.del_account
+    ),
     path('account_book/add_category/', account_book_app.views.add_category),
-    path('account_book/del_category/', account_book_app.views.del_category),
+    path(
+        'account_book/<int:category_id>/category_detail/del_category/',
+        account_book_app.views.del_category
+    ),
     path(
         'account_book/<int:category_id>/category_detail/set_category_order/',
         account_book_app.views.set_category_order,
-    )
+    ),
+
+    # community
+    path('community/', community_app.views.index),
+    path('community/<int:post_id>/post_detail/', community_app.views.post_detail),
+    path('community/add_post/', community_app.views.add_post),
+    path(
+        'community/<int:post_id>/post_detail/add_comment/',
+        community_app.views.add_comment
+    ),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

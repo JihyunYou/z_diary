@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'common_app',
     'bootstrap5',
     'account_book_app',
+    'community_app',
     'django.contrib.humanize',
     'jquery',
     'bootstrap_datepicker_plus',

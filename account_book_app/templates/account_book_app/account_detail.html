@@ -9,30 +9,51 @@
     {% if user.is_authenticated %}
 
         <div class="row">
-            <div class="col-lg-2"></div>
-            <div class="col-lg-8">
-
-        <div class="text-end">
-            <a
-                class="btn btn-warning"
-                role="button"
-                href="/account_book"
-            >
-                <i class="fas fa-backward">&nbsp;&nbsp;돌아가기</i>
-            </a>
-        </div>
-        <br>
-
-        <div class="card">
-            <div class="card-header">
-                <h2>가계부 세부 정보</h2>
+            <div class="col-lg-3 not-mobile">
+                {% include 'account_book_app/base_category_list.html' %}
             </div>
-            <div class="card-body">
+
+            <div class="col-lg-9">
+                <div class="row">
+                    <div class="col-7">
+                        <h3>가계부 세부 정보</h3>
+                    </div>
+                    <div class="col-5 text-end">
+                        <a
+                            class="btn btn-warning"
+                            role="button"
+                            href="/account_book"
+                        >
+                            <i class="fas fa-backward">&nbsp;&nbsp;돌아가기</i>
+                        </a>
+                    </div>
+                </div>
+
+                <hr class="style1">
+
+                <div class="text-end">
+                    <a
+                        class="btn btn-danger btn-sm btn-sm"
+                        role="button" data-bs-toggle="modal"
+                        data-bs-target="#deleteAccountModal"
+                    >
+                        <i class="fas fa-trash-alt">&nbsp;&nbsp;삭제</i>
+                    </a>
+
+                    <a
+                        class="btn btn-success btn-sm float-right"
+                        role="button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#updateAccountModal"
+                    >
+                        <i class="fas fa-edit">&nbsp;&nbsp;수정</i>
+                    </a>
+                </div>
 
                 <table class="table">
                     <tr>
                         <th>일자</th>
-                        <td>{{ account_obj.date | date:"Y-m-d ( D )" }}</td>
+                        <td>{{ account_obj.date | date:"Y.m.d (D)" }}</td>
                     </tr>
                     <tr>
                         <th>범주</th>
@@ -56,47 +77,58 @@
                 </table>
 
             </div>
-            <div class="card-footer text-end">
-                <a
-                    class="btn btn-success btn-sm float-right"
-                    role="button"
-                    data-bs-toggle="modal"
-                    data-bs-target="#updateAccountModal"
-                >
-                    <i class="fas fa-dollar-sign">&nbsp;&nbsp;수정</i>
-                </a>
+
+
+<!-- Update Account Modal -->
+<div class="modal fade" id="updateAccountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateAccountModalLabel">가계부 항목 수정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        </div>
+            {{ account_form.media }}
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-body">
 
-            </div>
-            <div class="col-lg-2"></div>
-        </div>
+                    {% bootstrap_form account_form layout="horizontal" %}
 
-
-    <!-- Add Account Modal -->
-    <div class="modal fade" id="updateAccountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="updateAccountModalLabel">가계부 항목 수정</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                {{ account_form.media }}
-                <form method="post">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="submit" class="btn btn-success float-right">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteAccountModalLabel">경고</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                [ {{ account_obj.date | date:"Y.m.d (D)"}}: {{ account_obj.category_id }} ] 가계부 항목을 삭제하시겠습니까.
+            </div>
+            <div class="modal-footer">
+                <form action="del_account/" method="post">
                     {% csrf_token %}
-                    <div class="modal-body">
+                    <input type="hidden" name="account_id" value="{{ account_obj.id }}">
 
-                        {% bootstrap_form account_form layout="horizontal" %}
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                        <button type="submit" class="btn btn-success float-right">저장</button>
-                    </div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-times-circle">&nbsp;&nbsp;삭제</i>
+                    </button>
                 </form>
             </div>
         </div>
     </div>
+</div>
 
     <!--  로그인 하지 않은 상태라면  -->
     {% else %}
