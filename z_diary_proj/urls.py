@@ -30,6 +30,7 @@ urlpatterns = [
     path('', common_app.views.index),
     path('login/', common_app.views.login),
     path('logout/', common_app.views.logout),
+    path('signup/', common_app.views.signup),
     path('dev/', common_app.views.dev_alert),
 
     # account_book
