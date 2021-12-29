@@ -177,7 +177,7 @@ def account_detail(request, account_id):
         ).get('total') or 0
     # #################
 
-    account_form = AccountForm(request.POST or None, instance=account_obj)
+    account_form = AccountForm(request.user, request.POST or None, instance=account_obj)
     if account_form.is_valid():
         account_form.save()
         return redirect(account_detail, account_id=account_id)
@@ -252,27 +252,6 @@ def del_account(request, account_id):
         account_obj = Account.objects.get(pk=account_id)
         if account_obj is not None:
             account_obj.delete()
-
-    return redirect(show_contents)
-
-
-def update_account(request):
-    # 로그인 하지 않은 사용자가 URL을 통해 회원을 삭제하는 것을 막음
-    if not request.user.is_authenticated:
-        print("권한 없는 사용자의 가계부 내용 등록 차단")
-        return redirect(show_contents)
-
-    if request.POST:
-        account_form = AccountForm(request.POST or None)
-        if account_form.is_valid():
-            account = account_form.save(commit=False)
-
-            account.user_id = request.user
-            account.created_by = request.user
-
-            account.save()
-
-            return redirect(show_contents)
 
     return redirect(show_contents)
 
