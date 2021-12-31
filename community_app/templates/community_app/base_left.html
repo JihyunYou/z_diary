@@ -1,8 +1,23 @@
 <div class="card">
     <div class="card-header">
-        요약 정보?
+        요약
     </div>
     <div class="card-body" style="padding-left: 2rem; padding-right: 2rem;">
-
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>구분</th>
+                    <th>계</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subject in subject_objs %}
+                <tr>
+                    <td>{{ subject.name }}</td>
+                    <td>{{ subject.post_set.count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>

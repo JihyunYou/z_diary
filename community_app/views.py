@@ -53,6 +53,9 @@ def index(request):
     post_objs = Post.objects.filter(subject_id__is_admin=False)
     context['post_objs'] = post_objs
 
+    subject_objs = Subject.objects.all
+    context['subject_objs'] = subject_objs
+
     return render(
         request,
         'community_app/index.html',
@@ -68,6 +71,9 @@ def post_detail(request, post_id):
 
     context['post_obj'] = post_obj
     context['comment_objs'] = comment_objs
+
+    subject_objs = Subject.objects.all
+    context['subject_objs'] = subject_objs
 
     post_form = PostForm(request.user, request.POST or None, instance=post_obj)
     if post_form.is_valid():

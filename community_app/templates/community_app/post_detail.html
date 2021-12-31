@@ -6,17 +6,24 @@
 
 {% block main_area %}
 
+<style>
+    #comment-table p {
+        margin-bottom: 0rem;
+    }
+</style>
+
 <div class="row">
-    <div class="col-3">
+    <div class="col-lg-3 hidden-mobile">
         {% include 'common_app/base_left_top.html' %}
         <br>
         {% include 'community_app/base_left.html' %}
     </div>
-    <div class="col-9">
+    <div class="col-lg-9">
         <br>
         <div class="row">
-            {% if user == post_obj.created_by %}
+
             <div class="col-5 text-start">
+                {% if user == post_obj.created_by %}
                 <a
                     class="btn btn-danger btn-sm"
                     role="button" data-bs-toggle="modal"
@@ -33,23 +40,24 @@
                 >
                     <i class="fas fa-edit">&nbsp;&nbsp;수정</i>
                 </a>
+                {% endif %}
             </div>
-            {% endif %}
+
             <div class="col-7 text-end">
-                <a
-                    class="btn btn-secondary btn-sm"
-                    role="button"
-                    href="/community"
-                >
-                    <i class="fas fa-caret-up">&nbsp;&nbsp;이전글</i>
-                </a>
-                <a
-                    class="btn btn-secondary btn-sm"
-                    role="button"
-                    href="/community"
-                >
-                    <i class="fas fa-caret-down">&nbsp;&nbsp;다음글</i>
-                </a>
+<!--                <a-->
+<!--                    class="btn btn-secondary btn-sm"-->
+<!--                    role="button"-->
+<!--                    href="/community"-->
+<!--                >-->
+<!--                    <i class="fas fa-caret-up">&nbsp;&nbsp;이전글</i>-->
+<!--                </a>-->
+<!--                <a-->
+<!--                    class="btn btn-secondary btn-sm"-->
+<!--                    role="button"-->
+<!--                    href="/community"-->
+<!--                >-->
+<!--                    <i class="fas fa-caret-down">&nbsp;&nbsp;다음글</i>-->
+<!--                </a>-->
                 <a
                     class="btn btn-secondary btn-sm"
                     role="button"
@@ -92,7 +100,7 @@
 
                 <hr class="style1" style="margin-top: 0rem; margin-bottom: 0rem;">
 
-                <table class="table">
+                <table id="comment-table" class="table">
                     {% for comment in comment_objs %}
                     <tr>
                         <td class="font-weight-light">
