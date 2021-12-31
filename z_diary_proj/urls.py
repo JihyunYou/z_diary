@@ -57,8 +57,23 @@ urlpatterns = [
     path('community/<int:post_id>/post_detail/', community_app.views.post_detail),
     path('community/add_post/', community_app.views.add_post),
     path(
+        'community/<int:post_id>/post_detail/del_post/',
+        community_app.views.del_post
+    ),
+    path(
         'community/<int:post_id>/post_detail/add_comment/',
         community_app.views.add_comment
+    ),
+    path(
+        'community/<int:post_id>/post_detail/del_comment/',
+        community_app.views.del_comment
+    ),
+    path('community/subject_list/', community_app.views.subject_list),
+    path('community/<int:subject_id>/subject_detail/', community_app.views.subject_detail),
+    path('community/subject_list/add_subject/', community_app.views.add_subject),
+    path(
+        'community/<int:subject_id>/subject_detail/del_subject/',
+        community_app.views.del_subject
     ),
 ]
 

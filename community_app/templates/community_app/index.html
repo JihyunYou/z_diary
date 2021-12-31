@@ -7,16 +7,26 @@
 {% block main_area %}
 
 <div class="row">
-    <div class="col-3">
+
+    <div class="col-lg-3 hidden-mobile">
+        {% include 'common_app/base_left_top.html' %}
+        <br>
         {% include 'community_app/base_left.html' %}
     </div>
-    <div class="col-9">
+    <div class="col-lg-9">
         <h3>자유게시판</h3>
         <p>{{ post_objs.count | intcomma }} 개의 글</p>
         <hr class="style1">
 
         <div class="col text-end">
             {% if user.is_authenticated %}
+
+                {% if user.is_staff %}
+                <a class="button btn btn-sm btn-warning" href="/community/subject_list/">
+                    <i class="fas fa-user-check">&nbsp;&nbsp;말머리 관리</i>
+                </a>
+                {% endif %}
+
             <a
                 class="btn btn-warning btn-sm"
                 role="button"
@@ -45,15 +55,16 @@
             </thead>
             <tbody>
                 {% for post in post_objs %}
-                <tr onClick="location.href='/community/{{ post.id }}/post_detail'">
+                <tr onClick="location.href='/community/{{ post.id }}/post_detail/'">
                     <td>
                         <span class="badge bg-secondary">
-                            {{ post.category_id }}
+                            {{ post.subject_id }}
                         </span>
-                        {{ post.title }}
+                        <span>{{ post.title }}</span>
+                        <span style="color:red;">[{{ post.comment_set.count }}]</span>
                     </td>
                     <td class="text-center">{{ post.created_by }}</td>
-                    <td class="text-center">{{ post.created_at | date:"Y.m.d"}}</td>
+                    <td class="text-center">{{ post.created_at | date:"Y.m.d" }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

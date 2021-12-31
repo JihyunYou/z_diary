@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from community_app.models import Category
+from community_app.models import Subject
 
 
-class CategoryAdmin(admin.ModelAdmin):
-    model = Category
+class SubjectAdmin(admin.ModelAdmin):
+    model = Subject
 
     list_display = ('name', 'description')
     list_filter = ('name',)
@@ -21,4 +21,4 @@ class CategoryAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(Category, CategoryAdmin)
+admin.site.register(Subject, SubjectAdmin)

@@ -9,7 +9,9 @@
     {% if user.is_authenticated %}
 
         <div class="row">
-            <div class="col-lg-3 not-mobile">
+            <div class="col-lg-3 hidden-mobile">
+                {% include 'common_app/base_left_top.html' %}
+                <br>
                 {% include 'account_book_app/base_category_list.html' %}
             </div>
 
@@ -72,7 +74,7 @@
                         >{{ account_obj.amount | intcomma }} 원</td>
                     </tr>
                     <tr>
-                        <td colspan="2">{{ account_obj.description }}</td>
+                        <td colspan="2">{{ account_obj.description | linebreaks }}</td>
                     </tr>
                 </table>
 

@@ -62,6 +62,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+
     # REQUIRED_FIELDS 안 쓰면 createsuperuser 할 때 안 나타남
     REQUIRED_FIELDS = ['name']
 

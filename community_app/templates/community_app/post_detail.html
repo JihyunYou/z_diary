@@ -8,51 +8,138 @@
 
 <div class="row">
     <div class="col-3">
+        {% include 'common_app/base_left_top.html' %}
+        <br>
         {% include 'community_app/base_left.html' %}
     </div>
     <div class="col-9">
         <br>
-        <div class="col text-end">
-            <a
-                class="btn btn-secondary btn-sm"
-                role="button"
-                href="/community"
-            >
-                <i class="fas fa-caret-up">&nbsp;&nbsp;이전글</i>
-            </a>
-            <a
-                class="btn btn-secondary btn-sm"
-                role="button"
-                href="/community"
-            >
-                <i class="fas fa-caret-down">&nbsp;&nbsp;다음글</i>
-            </a>
-            <a
-                class="btn btn-secondary btn-sm"
-                role="button"
-                href="/community"
-            >
-                <i class="fas fa-backward">&nbsp;&nbsp;목록</i>
-            </a>
+        <div class="row">
+            {% if user == post_obj.created_by %}
+            <div class="col-5 text-start">
+                <a
+                    class="btn btn-danger btn-sm"
+                    role="button" data-bs-toggle="modal"
+                    data-bs-target="#deletePostModal"
+                >
+                    <i class="fas fa-trash-alt">&nbsp;&nbsp;삭제</i>
+                </a>
+
+                <a
+                    class="btn btn-success btn-sm"
+                    role="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#updatePostModal"
+                >
+                    <i class="fas fa-edit">&nbsp;&nbsp;수정</i>
+                </a>
+            </div>
+            {% endif %}
+            <div class="col-7 text-end">
+                <a
+                    class="btn btn-secondary btn-sm"
+                    role="button"
+                    href="/community"
+                >
+                    <i class="fas fa-caret-up">&nbsp;&nbsp;이전글</i>
+                </a>
+                <a
+                    class="btn btn-secondary btn-sm"
+                    role="button"
+                    href="/community"
+                >
+                    <i class="fas fa-caret-down">&nbsp;&nbsp;다음글</i>
+                </a>
+                <a
+                    class="btn btn-secondary btn-sm"
+                    role="button"
+                    href="/community"
+                >
+                    <i class="fas fa-backward">&nbsp;&nbsp;목록</i>
+                </a>
+            </div>
         </div>
+
         <br>
-        <div class="card">
+        <div class="card" style="padding: 1rem;">
             <div class="card-body">
-                <span class="badge bg-secondary">
-                    {{ post_obj.category_id }}&nbsp;&nbsp;
-                    <i class="fas fa-caret-right"></i>
-                </span>
+                <div class="post-detail-header">
+                    <span
+                        class="badge bg-secondary"
+                        style="margin-bottom:10px"
+                    >
+                        {{ post_obj.subject_id }}&nbsp;&nbsp;
+                        <i class="fas fa-caret-right"></i>
+                    </span>
+                    <h2>{{ post_obj.title }}</h2>
+                    <i
+                        class="fas fa-user-alt"
+                        style="margin-left: 1rem;"
+                    >&nbsp;&nbsp;{{ post_obj.created_by }}</i>
+                    - {{ post_obj.created_at | date:"Y.m.d.  H:i" }}
+                </div>
 
-                <h3>{{ post_obj.title }}</h3>
-                {{ post_obj.created_by }}
-                <hr class="style1">
-                {{ post_obj.content }}
-                <hr class="style1">
-                <h4>댓글</h4>
+                <hr class="style1" style="margin-top:0px">
 
-                {% for comment in comment_objs %}
-                    {{ comment.comment }}
-                {% endfor %}
+                {{ post_obj.content | linebreaks }}
+
+                <br><br><br>
+
+                <i
+                    class="fas fa-comment-dots"
+                    style="margin-left: 1rem; color:green;"
+                >&nbsp;&nbsp;댓글 {{ comment_objs.count }}</i>
+
+                <hr class="style1" style="margin-top: 0rem; margin-bottom: 0rem;">
+
+                <table class="table">
+                    {% for comment in comment_objs %}
+                    <tr>
+                        <td class="font-weight-light">
+                            <div class="row">
+                                <div class="col-7">
+                                    <i
+                                        class="fas fa-user-alt"
+                                        style="margin-left: 1rem;"
+                                    >&nbsp;&nbsp;{{ comment.created_by }}</i>
+                                    {% if comment.created_by == post_obj.created_by %}
+                                    <span class="badge rounded-pill bg-danger">
+                                        작성자
+                                    </span>
+                                    {% endif %}
+                                    <p style="
+                                        margin-left: 1rem;
+                                        font-size: 12px;
+                                        margin-bottom: 0rem;
+                                    ">
+                                        {{ comment.created_at | date:"Y.m.d.  H:i" }}
+                                    </p>
+                                </div>
+
+                                {% if user == comment.created_by %}
+                                <div class="col-5 text-end">
+                                    <form action="del_comment/" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                                        <button
+                                            onclick="return del_comment_btn()"
+                                            type="submit"
+                                            class="btn btn-danger btn-sm"
+                                        >
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div style="margin-left: 2rem;">
+                                {{ comment.comment | linebreaks }}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
 
                 <div class="CommentWriter">
                     <form action="add_comment/" method="POST">
@@ -69,5 +156,69 @@
         </div>
     </div>
 </div>
+
+
+<!-- Update Account Modal -->
+<div class="modal fade" id="updatePostModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updatePostModalLabel">게시글 수정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            {{ account_form.media }}
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+
+                    {% bootstrap_form post_form layout="horizontal" %}
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="submit" class="btn btn-success float-right">
+                        <i class="fas fa-edit">&nbsp;&nbsp;수정</i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deletePostModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deletePostModalLabel">경고</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>게시글 [ {{ post_obj.title }} ] 을 삭제하시겠습니까?</p>
+                <p>게시글의 댓글들도 함께 삭제됩니다</p>
+            </div>
+            <div class="modal-footer">
+                <form action="del_post/" method="post">
+                    {% csrf_token %}
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt">&nbsp;&nbsp;삭제</i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function del_comment_btn() {
+        if (confirm('댓글을 삭제하시겠습니까?')) {
+            submit();
+        } else {
+            return false;
+        }
+    }
+</script>
 
 {% endblock %}

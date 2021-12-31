@@ -22,7 +22,7 @@
     <style>
         body {
             background-color: #ffffff;
-            font-family: 'Jeju Hallasan', cursive;
+<!--            font-family: 'Jeju Hallasan', cursive;-->
         }
         .password {
             font-family: 'default';
@@ -42,7 +42,18 @@
         }
 
         @media only screen and (max-width: 767px) {
-            .not-mobile {
+            .hidden-mobile {
+                display: none;
+            }
+            .visible-mobile {
+<!--                display: block;-->
+            }
+        }
+        @media only screen and (min-width: 768px) {
+            .hidden-mobile {
+<!--                display: block;-->
+            }
+            .visible-mobile {
                 display: none;
             }
         }
@@ -71,7 +82,15 @@
                 Z-Diary
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarText"
+                aria-controls="navbarText"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
               <span class="navbar-toggler-icon bg-white"></span>
             </button>
 

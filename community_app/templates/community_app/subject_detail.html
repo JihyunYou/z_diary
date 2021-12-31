@@ -1,0 +1,132 @@
+{% extends 'common_app/base.html' %}
+
+{% load bootstrap5 %}
+
+{% load humanize %}
+
+{% block main_area %}
+
+<div class="row">
+    <div class="col-3">
+        {% include 'common_app/base_left_top.html' %}
+    </div>
+    <div class="col-9">
+        <br>
+        <div class="row">
+            <div class="col-7 text-start">
+                <a
+                    class="btn btn-danger btn-sm"
+                    role="button" data-bs-toggle="modal"
+                    data-bs-target="#deleteSubjectModal"
+                >
+                    <i class="fas fa-trash-alt">&nbsp;&nbsp;삭제</i>
+                </a>
+
+                <a
+                    class="btn btn-success btn-sm"
+                    role="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#updateSubjectModal"
+                >
+                    <i class="fas fa-edit">&nbsp;&nbsp;수정</i>
+                </a>
+            </div>
+            <div class="col-5 text-end">
+                <a
+                    class="btn btn-secondary btn-sm"
+                    role="button"
+                    href="/community/subject_list/"
+                >
+                    <i class="fas fa-backward">&nbsp;&nbsp;목록</i>
+                </a>
+            </div>
+        </div>
+        <br>
+        <div class="card" style="padding: 1rem;">
+            <div class="card-body">
+                <div class="post-detail-header">
+                    <h2>{{ subject_obj.name }}</h2>
+                </div>
+                <hr class="style1" style="margin-top:0px">
+
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th>관리자 전용 여부</th>
+                            <td>{{ subject_obj.is_admin }}</td>
+                        </tr>
+                        <tr>
+                            <th>작성자</th>
+                            <td>{{ subject_obj.created_by }}</td>
+                        </tr>
+                        <tr>
+                            <th>작성일자</th>
+                            <td>{{ subject_obj.created_at | date:"Y.m.d.  H:i" }}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                {{ subject_obj.description | linebreaks }}
+
+                <br><br>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Update Subject Modal -->
+<div class="modal fade" id="updateSubjectModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateSubjectModalLabel">말머리 수정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            {{ account_form.media }}
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+
+                    {% bootstrap_form subject_form layout="horizontal" %}
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="submit" class="btn btn-success float-right">
+                        <i class="fas fa-edit">&nbsp;&nbsp;수정</i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Subject Modal -->
+<div class="modal fade" id="deleteSubjectModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteSubjectModalLabel">경고</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>말머리 [ {{ subject_obj.name }} ] 을 삭제하시겠습니까?</p>
+                <p>게시글의 말머리들도 함께 삭제됩니다</p>
+            </div>
+            <div class="modal-footer">
+                <form action="del_subject/" method="post">
+                    {% csrf_token %}
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt">&nbsp;&nbsp;삭제</i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'common_app/base.html' %}
+
+{% load bootstrap5 %}
+
+{% load humanize %}
+
+{% block main_area %}
+
+<div class="row">
+
+    <div class="col-lg-3 hidden-mobile">
+        {% include 'common_app/base_left_top.html' %}
+        <br>
+    </div>
+
+    <div class="col-lg-9">
+        <div class="row">
+            <div class="col-7">
+                <h3>말머리 관리</h3>
+                <p style="margin-left:1rem;">{{ subject_objs.count | intcomma }} 개의 말머리</p>
+            </div>
+            <div class="col-5 text-end">
+                <a
+                    class="btn btn-warning"
+                    role="button"
+                    href="/community"
+                >
+                    <i class="fas fa-backward">&nbsp;&nbsp;돌아가기</i>
+                </a>
+            </div>
+        </div>
+
+        <hr class="style1" style="margin-top: 0rem;">
+
+        <div class="text-end">
+            <a
+                class="btn btn-warning btn-sm"
+                role="button"
+                data-bs-toggle="modal"
+                data-bs-target="#addCategoryModal"
+            >
+                <i class="fas fa-plus-square">&nbsp;&nbsp;범주 추가</i>
+            </a>
+        </div>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>말머리</th>
+                    <th>설명</th>
+                    <th>관리자 전용 여부</th>
+                    <th>작성자</th>
+                    <th>작성일자</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subject in subject_objs %}
+                <tr onClick="location.href='/community/{{ subject.id }}/subject_detail/'">
+                    <td>{{ subject.name }}</td>
+                    <td>{{ subject.description }}</td>
+                    <td>{{ subject.is_admin }}</td>
+                    <td>{{ subject.created_by }}</td>
+                    <td>{{ subject.created_at | date:"Y.m.d" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+<!-- Add Post Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCategorytModalLabel">범주 추가</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="add_subject/" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+
+                    {% bootstrap_form subject_form layout="horizontal" %}
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="submit" class="btn btn-success float-right">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
