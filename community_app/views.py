@@ -75,13 +75,14 @@ def post_detail(request, post_id):
     subject_objs = Subject.objects.all
     context['subject_objs'] = subject_objs
 
-    post_form = PostForm(request.user, request.POST or None, instance=post_obj)
-    if post_form.is_valid():
-        post_form.save()
-        return redirect(
-            post_detail,
-            post_id
-        )
+    if request.user.is_authenticated:
+        post_form = PostForm(request.user, request.POST or None, instance=post_obj)
+        if post_form.is_valid():
+            post_form.save()
+            return redirect(
+                post_detail,
+                post_id
+            )
 
     context['post_form'] = post_form
 

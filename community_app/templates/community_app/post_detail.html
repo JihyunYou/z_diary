@@ -167,6 +167,7 @@
 
 
 <!-- Update Account Modal -->
+{% if user.is_authenticated %}
 <div class="modal fade" id="updatePostModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -192,6 +193,7 @@
         </div>
     </div>
 </div>
+{% endif %}
 
 <!-- Delete Account Modal -->
 <div class="modal fade" id="deletePostModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
