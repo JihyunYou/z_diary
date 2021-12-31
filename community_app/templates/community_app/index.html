@@ -54,6 +54,23 @@
                 </tr>
             </thead>
             <tbody>
+                {% for post in admin_post_objs %}
+                <tr
+                    class="table-warning"
+                    onClick="location.href='/community/{{ post.id }}/post_detail/'"
+                >
+                    <td>
+                        <span class="badge bg-danger">
+                            {{ post.subject_id }}
+                        </span>
+                        <span>{{ post.title }}</span>
+                        <span style="color:red;">[{{ post.comment_set.count }}]</span>
+                    </td>
+                    <td class="text-center">{{ post.created_by }}</td>
+                    <td class="text-center">{{ post.created_at | date:"Y.m.d" }}</td>
+                </tr>
+                {% endfor %}
+
                 {% for post in post_objs %}
                 <tr onClick="location.href='/community/{{ post.id }}/post_detail/'">
                     <td>

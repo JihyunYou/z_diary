@@ -1,6 +1,7 @@
 from django.forms import ModelForm
 from django.shortcuts import render, redirect
 
+from community_app import models
 from community_app.models import Post, Comment, Subject
 
 
@@ -29,16 +30,27 @@ class PostForm(ModelForm):
             'content': '내용',
         }
 
+    def __init__(self, user=None, *args, **kwargs):
+        super(PostForm, self).__init__(*args, **kwargs)
+        if user:
+            # 관리자의 경우 공지 포함
+            if user.is_admin:
+                self.fields['subject_id'].queryset = models.Subject.objects.all()
+            else:
+                self.fields['subject_id'].queryset = models.Subject.objects.filter(is_admin=False)
+
 
 def index(request):
     context = {}
 
-    post_form = PostForm
+    if request.user.is_authenticated:
+        post_form = PostForm(user=request.user)
+        context['post_form'] = post_form
 
-    post_objs = Post.objects.all
+    admin_post_objs = Post.objects.filter(subject_id__is_admin=True)
+    context['admin_post_objs'] = admin_post_objs
 
-    context['post_form'] = post_form
-
+    post_objs = Post.objects.filter(subject_id__is_admin=False)
     context['post_objs'] = post_objs
 
     return render(
@@ -57,7 +69,7 @@ def post_detail(request, post_id):
     context['post_obj'] = post_obj
     context['comment_objs'] = comment_objs
 
-    post_form = PostForm(request.POST or None, instance=post_obj)
+    post_form = PostForm(request.user, request.POST or None, instance=post_obj)
     if post_form.is_valid():
         post_form.save()
         return redirect(
@@ -76,7 +88,7 @@ def post_detail(request, post_id):
 
 def add_post(request):
     if request.POST:
-        post_form = PostForm(request.POST)
+        post_form = PostForm(request.user, request.POST)
         if post_form.is_valid():
             post = post_form.save(commit=False)
 
