@@ -155,7 +155,17 @@
                         <textarea class="form-control" name="comment" id="comment" cols="30" rows="3"></textarea>
                         <br>
                         <div class="text-end">
+                            {% if user.is_authenticated %}
                             <button type="submit" class="btn btn-success">등록</button>
+                            {% else %}
+                            <a
+                                class="btn btn-warning"
+                                role="button"
+                            >
+                                <i class="fas fa-times-circle">&nbsp;&nbsp;댓글 작성은 회원만 가능합니다</i>
+                            </a>
+                            {% endif %}
+
                         </div>
                     </form>
                 </div>
