@@ -61,20 +61,60 @@
                     </a>
                 </div>
 
-                <table class="table table-hover table-sm" id="account_book_table">
+                <table class="table table-hover table-sm"
+                       id="account_book_table"
+
+                       data-filter-control="true"
+                       data-toggle="table"
+
+                       data-search="true"
+                       data-show-search-clear-button="true"
+
+                       data-show-export="true"
+                       data-export-types="['txt', 'xlsx']"
+
+                >
                     <thead>
                         <tr>
-                            <th class="text-center" scope="col" width="5%">#</th>
-                            <th class="text-center" scope="col" width="20%">날짜</th>
-                            <th class="text-center" scope="col" width="13%">범주</th>
-                            <th class="text-center hidden-mobile" scope="col" width="45%">설명</th>
-                            <th class="text-center" scope="col" width="17%">금액</th>
+                            <th class="text-center" scope="col" width="5%"></th>
+                            <th class="text-center"
+                                scope="col"
+                                width="20%"
+                                data-field="date"
+                                data-filter-control="input"
+                                data-sortable="true">날짜</th>
+                            <th class="text-center"
+                                scope="col"
+                                width="13%"
+                                data-field="examen"
+                                data-filter-control="select"
+                                data-sortable="true">범주</th>
+                            <th class="text-center hidden-mobile"
+                                scope="col"
+                                width="45%"
+                                data-field="description"
+                                data-filter-control="input"
+                                data-sortable="true">설명</th>
+                            <th class="text-center"
+                                scope="col"
+                                width="17%"
+                                data-field="amount"
+                                data-filter-control="input"
+                                data-sortable="true">금액</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for account in account_objs %}
                         <tr onClick="location.href='/account_book/{{ account.id }}/account_detail'">
-                            <th scope="row" class="text-end">{{ forloop.counter }}</th>
+                            <td class="text-center" data-force-hide="true">
+                                <a
+                                    class="btn btn-sm btn-warning"
+                                    role="button"
+                                    href="/account_book/{{ account.id }}/account_detail"
+                                >
+                                    <i class="fas fa-search"></i>
+                                </a>
+                            </td>
                             <td class="text-center">{{ account.date | date:"Y.m.d (D)"}}</td>
                             <td class="text-center">{{ account.category_id.name }}</td>
                             <td class="hidden-mobile"
@@ -99,9 +139,8 @@
                         </tr>
 
                         {% endfor %}
-                    </tbody>
-                    <tfoot>
-                        <tr>
+
+                        <tr class="border-top: solid;">
                             <th class="hidden-mobile"></th>
                             <th class="text-center" colspan="3">총 수입</th>
                             <td class="text-end px-4" style="color:blue;">{{ income | intcomma }} 원</td>
@@ -116,7 +155,8 @@
                             <th class="text-center" colspan="3">총 결산</th>
                             <td class="text-end px-4">{{ total | intcomma }} 원</td>
                         </tr>
-                    </tfoot>
+                    </tbody>
+
                 </table>
 
             </div>

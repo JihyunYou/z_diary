@@ -17,6 +17,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!--  FullCalendar  -->
+    <link href='{% static "fullcalendar/main.css" %}' rel='stylesheet' />
+    <script src='{% static "fullcalendar/main.js" %}'></script>
+    <script src='{% static "fullcalendar/fullcalendar-columns.js" %}'></script>
+    <style type="text/css">
+        #calendar a {color: black;}
+        #calendar .fc-day.fc-day-sat a { color:#0000FF; }    /* 토요일 */
+        #calendar .fc-day-sun a { color:#FF0000; }    /* 일요일 */
+    </style>
+
     <!--  Font  -->
     <link rel="stylesheet" href="http://fonts.googleapis.com/earlyaccess/jejuhallasan.css">
     <style>
@@ -59,8 +69,9 @@
         }
     </style>
 
-    <!--  fas icon 사용을 위한 import  -->
+    <!--  icon 사용을 위한 import  -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
     <!--  Jquery  -->
     <script src="{% static 'js/jquery.js' %}"></script>
@@ -68,9 +79,20 @@
     <!--  SheetJS: 엑셀 다운로드  -->
     <script lang="javascript" src="{% static 'dist/xlsx.full.min.js' %}"></script>
 
-    <script type="text/css">
-
-    </script>
+    <!--  Bootstrap Table  -->
+    <link rel="stylesheet" href='{% static "bootstrap-table-master/bootstrap-table.min.css" %}'>
+    <script src='{% static "bootstrap-table-master/bootstrap-table.min.js" %}'></script>
+    <script src='{% static "bootstrap-table-master/locale/bootstrap-table-ko-KR.min.js" %}'></script>
+    <!--  filter control  -->
+    <link rel="stylesheet"
+          type="text/css"
+          href='{% static "bootstrap-table-master/extensions/filter-control/bootstrap-table-filter-control.css" %}'>
+    <script src='{% static "bootstrap-table-master/extensions/filter-control/bootstrap-table-filter-control.js" %}'></script>
+    <!--  table export  -->
+    <script src='{% static "bootstrap-table-master/libs/FileSaver/FileSaver.min.js" %}'></script>
+    <script src='{% static "bootstrap-table-master/libs/js-xlsx/xlsx.core.min.js" %}'></script>
+    <script src='{% static "bootstrap-table-master/extensions/export/bootstrap-table-export.js" %}'></script>
+    <script src='{% static "bootstrap-table-master/extensions/export/tableExport.js" %}'></script>
 
     <title>Z-Diary</title>
 </head>
@@ -103,7 +125,7 @@
                         <a class="nav-link" href="/dev" style="color: white;">식단관리</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/dev" style="color: white;">운동일지</a>
+                        <a class="nav-link" href="/workout" style="color: white;">운동일지</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/dev" style="color: white;">스케쥴</a>
@@ -139,6 +161,25 @@
 
         {% endblock %}
 
+    </div>
+
+    <!--  footer  -->
+    <br><br><br><br><br>
+    <br><br><br><br><br>
+    <br><br><br><br>
+    <div class="container">
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+            <p class="col-md-4 mb-0 text-muted">© 2022 Peach All right reserved</p>
+
+<!--            <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">-->
+<!--                <img src="{% static 'img/logo_white.jpg' %}" alt="" width="50" height="50">-->
+<!--            </a>-->
+
+<!--            <ul class="nav col-md-4 justify-content-end">-->
+<!--                <li class="nav-item"><a href="/" class="nav-link px-2 text-muted">Home</a></li>-->
+<!--                <li class="nav-item"><a href="/about" class="nav-link px-2 text-muted">About</a></li>-->
+<!--            </ul>-->
+        </footer>
     </div>
 
 </body>
